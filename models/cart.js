@@ -32,7 +32,7 @@ module.exports = class Cart {
         });
     }
 
-    static deleteProduct(id, price){
+    static deleteProduct(id, productPrice){
         fs.readFile(p, (err, fileContent) => {
             if (err) {
                 return;
@@ -48,4 +48,19 @@ module.exports = class Cart {
             });
         });
     }
-};
+
+    static getCart(callback){
+        fs.readFile(p, (err, fileContent) => {
+            const cart = JSON.parse(fileContent);
+            if (err) {
+                callback(null);
+            } else {
+                callback(cart);
+            }
+            
+        });
+    }
+        
+
+    
+}
