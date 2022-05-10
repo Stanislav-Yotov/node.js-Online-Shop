@@ -3,6 +3,7 @@ const errorController = require('./controllers/error.js');
 
 const express = require('express');
 const bodyParser = require('body-parser');
+const db = require('./util/database.js');
 
 const app = express();
 
