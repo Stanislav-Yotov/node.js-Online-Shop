@@ -3,7 +3,7 @@ const errorController = require('./controllers/error.js');
 
 const express = require('express');
 const bodyParser = require('body-parser');
-const mongoConnect = require('./util/database.js');
+const mongoConnect = require('./util/database.js').mongoConnect;
 
 
 const app = express();
@@ -24,6 +24,7 @@ app.use((req, res, next) => {
     //         next();
     //     })
     //     .catch(err => console.log(err));
+    next();
 });
 
 app.use('/admin', adminRoutes);
