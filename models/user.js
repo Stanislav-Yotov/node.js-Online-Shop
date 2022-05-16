@@ -7,7 +7,7 @@ class User {
   constructor(username, email, cart, id) {
     this.name = username;
     this.email = email;
-    this.cart = cart; 
+    this.cart = cart; // {items: []}
     this._id = id;
   }
 
@@ -18,7 +18,7 @@ class User {
 
   addToCart(product) {
     const cartProductIndex = this.cart.items.findIndex(cp => {
-      return cp.productId == product._id;
+      return cp.productId.toString() === product._id.toString();
     });
     let newQuantity = 1;
     const updatedCartItems = [...this.cart.items];
@@ -42,9 +42,7 @@ class User {
         { _id: new ObjectId(this._id) },
         { $set: { cart: updatedCart } }
       );
-
-    
-  } 
+  }
 
   getCart() {
     const db = getDb();
@@ -65,6 +63,19 @@ class User {
           };
         });
       });
+  }
+
+  deleteItemFromCart(productId) {
+    const updatedCartItems = this.cart.items.filter(item => {
+      return item.productId.toString() !== productId.toString();
+    });
+    const db = getDb();
+    return db
+      .collection('users')
+      .updateOne(
+        { _id: new ObjectId(this._id) },
+        { $set: { cart: {items: updatedCartItems} } }
+      );
   }
 
   static findById(userId) {
