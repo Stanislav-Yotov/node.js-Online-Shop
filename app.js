@@ -4,8 +4,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 
 const errorController = require('./controllers/error');
-const mongoConnect = require('./util/database').mongoConnect;
 const User = require('./models/user');
+const mongoose = require('mongoose');
 
 const app = express();
 
@@ -32,6 +32,12 @@ app.use(shopRoutes);
 
 app.use(errorController.get404);
 
-mongoConnect(() => {
+mongoose
+.connect('mongodb+srv://@node-complete.u7g5c.mongodb.net/Node-Complete?retryWrites=true&w=majority')
+.then(result => {
   app.listen(3000);
+})
+.catch(err => {
+  console.log(err);
 });
+
