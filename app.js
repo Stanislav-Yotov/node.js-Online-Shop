@@ -7,8 +7,15 @@ const session = require('express-session');
 const errorController = require('./controllers/error');
 const User = require('./models/user');
 const mongoose = require('mongoose');
+const MongoDBStore = require('connect-mongodb-session')(session);
+
+
 
 const app = express();
+const store = new MongoDBStore({
+  uri: MONGODB_URI,
+  collection: 'sessions'
+});
 
 app.set('view engine', 'ejs');
 app.set('views', 'views');
@@ -20,7 +27,13 @@ const authRoutes = require('./routes/auth');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(session({ secret: 'my secret', resave: false, saveUninitialized: false }));
+app.use(session({
+  secret: 'my secret',
+  resave: false,
+  saveUninitialized: false,
+  store: store
+})
+);
 
 app.use((req, res, next) => {
   User.findById('62839d6c53157464cda8e09b')
@@ -38,24 +51,24 @@ app.use(authRoutes);
 app.use(errorController.get404);
 
 mongoose
-.connect('mongodb+srv://@node-complete.u7g5c.mongodb.net/Node-Complete?retryWrites=true&w=majority')
-.then(result => {
-  User.findOne().then(user => {
-    if (!user) {
-      const user = new User({
-        name: 'Stancho',
-        email: 'stancho@abv.bg',
-        cart: {
-          items: []
-        }
-      });
-      user.save();
-    }
+  .connect(MONGODB_URI)
+  .then(result => {
+    User.findOne().then(user => {
+      if (!user) {
+        const user = new User({
+          name: 'Stancho',
+          email: 'stancho@abv.bg',
+          cart: {
+            items: []
+          }
+        });
+        user.save();
+      }
+    })
+
+    app.listen(3000);
   })
-  
-  app.listen(3000);
-})
-.catch(err => {
-  console.log(err);
-});
+  .catch(err => {
+    console.log(err);
+  });
 
