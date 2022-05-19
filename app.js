@@ -9,7 +9,7 @@ const User = require('./models/user');
 const mongoose = require('mongoose');
 const MongoDBStore = require('connect-mongodb-session')(session);
 
-
+const MONGODB_URI = 'mongodb+srv://Stancho:nodecomplete@node-complete.u7g5c.mongodb.net/Node-Complete';
 
 const app = express();
 const store = new MongoDBStore({
@@ -36,7 +36,10 @@ app.use(session({
 );
 
 app.use((req, res, next) => {
-  User.findById('62839d6c53157464cda8e09b')
+  if (!req.session.user) {
+    return next();
+  }
+  User.findById(req.session.user._id)
     .then(user => {
       req.user = user;
       next();
