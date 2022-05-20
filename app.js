@@ -9,8 +9,7 @@ const User = require('./models/user');
 const mongoose = require('mongoose');
 const MongoDBStore = require('connect-mongodb-session')(session);
 
-
-
+const MONGODB_URI = 'mongodb+srv://Stancho:nodecomplete@node-complete.u7g5c.mongodb.net/Node-Complete';
 const app = express();
 const store = new MongoDBStore({
   uri: MONGODB_URI,
@@ -56,19 +55,6 @@ app.use(errorController.get404);
 mongoose
   .connect(MONGODB_URI)
   .then(result => {
-    User.findOne().then(user => {
-      if (!user) {
-        const user = new User({
-          name: 'Stancho',
-          email: 'stancho@abv.bg',
-          cart: {
-            items: []
-          }
-        });
-        user.save();
-      }
-    })
-
     app.listen(3000);
   })
   .catch(err => {
